@@ -1,0 +1,303 @@
+Arduino Common Libraries Reference
+=====================================
+
+This file lists commonly used Arduino libraries, their purposes, and installation instructions.
+
+INSTALLATION METHODS:
+1. Arduino IDE Library Manager: Tools > Manage Libraries > Search and Install
+2. Manual Installation: Download and extract to Arduino/libraries folder
+3. PlatformIO: Add to platformio.ini file
+
+CORE LIBRARIES (Built-in)
+=========================
+
+1. EEPROM
+   - Purpose: Read/write to internal EEPROM memory
+   - Installation: Built-in
+   - Example: EEPROM.write(address, value);
+
+2. SPI
+   - Purpose: Serial Peripheral Interface communication
+   - Installation: Built-in
+   - Example: SPI.begin();
+
+3. Wire
+   - Purpose: I2C communication
+   - Installation: Built-in
+   - Example: Wire.begin();
+
+4. SoftwareSerial
+   - Purpose: Additional serial ports on any digital pins
+   - Installation: Built-in
+   - Example: SoftwareSerial mySerial(2, 3);
+
+DISPLAY LIBRARIES
+=================
+
+5. LiquidCrystal
+   - Purpose: Control HD44780-based LCD displays
+   - Installation: Built-in
+   - Example: LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+
+6. Adafruit_SSD1306
+   - Purpose: OLED displays (128x64, 128x32)
+   - Installation: Library Manager
+   - Dependency: Adafruit_GFX
+   - Example: Adafruit_SSD1306 display(128, 64, &Wire);
+
+7. U8g2
+   - Purpose: Universal graphics library for various displays
+   - Installation: Library Manager
+   - Example: U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2;
+
+8. TFT_eSPI
+   - Purpose: TFT color displays
+   - Installation: Library Manager
+   - Example: TFT_eSPI tft = TFT_eSPI();
+
+SENSOR LIBRARIES
+================
+
+9. DHT sensor library
+   - Purpose: DHT11, DHT22 temperature/humidity sensors
+   - Installation: Library Manager (by Adafruit)
+   - Example: DHT dht(2, DHT22);
+
+10. OneWire
+    - Purpose: DS18B20 temperature sensors
+    - Installation: Library Manager
+    - Example: OneWire oneWire(2);
+
+11. DallasTemperature
+    - Purpose: DS18B20 temperature sensors (higher level)
+    - Installation: Library Manager
+    - Dependency: OneWire
+    - Example: DallasTemperature sensors(&oneWire);
+
+12. Adafruit_BME280
+    - Purpose: BME280 pressure/temperature/humidity sensor
+    - Installation: Library Manager
+    - Dependencies: Adafruit_Sensor, Adafruit_BusIO
+    - Example: Adafruit_BME280 bme;
+
+13. NewPing
+    - Purpose: Ultrasonic sensors (HC-SR04)
+    - Installation: Library Manager
+    - Example: NewPing sonar(12, 11, 200);
+
+14. MPU6050
+    - Purpose: 6-axis accelerometer/gyroscope
+    - Installation: Library Manager (by Electronic Cats)
+    - Example: MPU6050 mpu6050(Wire);
+
+MOTOR CONTROL LIBRARIES
+=======================
+
+15. Servo
+    - Purpose: Control servo motors
+    - Installation: Built-in
+    - Example: Servo myServo;
+
+16. Stepper
+    - Purpose: Control stepper motors
+    - Installation: Built-in
+    - Example: Stepper myStepper(200, 8, 9, 10, 11);
+
+17. AccelStepper
+    - Purpose: Advanced stepper motor control
+    - Installation: Library Manager
+    - Example: AccelStepper stepper(1, 2, 3);
+
+18. AFMotor
+    - Purpose: Adafruit Motor Shield
+    - Installation: Library Manager (Adafruit Motor Shield library)
+    - Example: AF_DCMotor motor(1);
+
+COMMUNICATION LIBRARIES
+=======================
+
+19. WiFi (ESP32/ESP8266)
+    - Purpose: WiFi connectivity
+    - Installation: Built-in for ESP boards
+    - Example: WiFi.begin(ssid, password);
+
+20. ESP8266WiFi
+    - Purpose: ESP8266 WiFi functions
+    - Installation: ESP8266 board package
+    - Example: ESP8266WiFi.begin();
+
+21. WebServer
+    - Purpose: HTTP web server
+    - Installation: Built-in for ESP32
+    - Example: WebServer server(80);
+
+22. ArduinoJson
+    - Purpose: JSON parsing and generation
+    - Installation: Library Manager
+    - Example: DynamicJsonDocument doc(1024);
+
+23. PubSubClient
+    - Purpose: MQTT communication
+    - Installation: Library Manager
+    - Example: PubSubClient client(espClient);
+
+24. HTTPClient
+    - Purpose: HTTP client requests
+    - Installation: Built-in for ESP32
+    - Example: HTTPClient http;
+
+25. ArduinoOTA
+    - Purpose: Over-the-air firmware updates
+    - Installation: Built-in for ESP32/ESP8266
+    - Example: ArduinoOTA.begin();
+
+STORAGE LIBRARIES
+=================
+
+26. SD
+    - Purpose: SD card read/write
+    - Installation: Built-in
+    - Example: SD.begin(chipSelect);
+
+27. SdFat
+    - Purpose: Enhanced SD card library
+    - Installation: Library Manager
+    - Example: SdFat SD;
+
+28. SPIFFS
+    - Purpose: Flash file system (ESP32/ESP8266)
+    - Installation: Built-in for ESP boards
+    - Example: SPIFFS.begin();
+
+29. LittleFS
+    - Purpose: Little File System (ESP32/ESP8266)
+    - Installation: Built-in for ESP boards
+    - Example: LittleFS.begin();
+
+TIME LIBRARIES
+==============
+
+30. RTClib
+    - Purpose: Real-time clock modules (DS1307, DS3231)
+    - Installation: Library Manager (by Adafruit)
+    - Example: RTC_DS3231 rtc;
+
+31. TimeLib
+    - Purpose: Time and date functions
+    - Installation: Library Manager
+    - Example: setTime(hour, minute, second, day, month, year);
+
+32. NTPClient
+    - Purpose: Network Time Protocol client
+    - Installation: Library Manager
+    - Example: NTPClient timeClient(ntpUDP);
+
+UTILITY LIBRARIES
+=================
+
+33. FastLED
+    - Purpose: Control addressable LED strips
+    - Installation: Library Manager
+    - Example: FastLED.addLeds<WS2812, DATA_PIN>(leds, NUM_LEDS);
+
+34. NeoPixel
+    - Purpose: Adafruit NeoPixel LED strips
+    - Installation: Library Manager (Adafruit NeoPixel)
+    - Example: Adafruit_NeoPixel strip(60, 6, NEO_GRB);
+
+35. Keypad
+    - Purpose: Matrix keypad input
+    - Installation: Library Manager
+    - Example: Keypad keypad = Keypad(makeKeymap(keys), rowPins, colPins, ROWS, COLS);
+
+36. IRremote
+    - Purpose: Infrared remote control
+    - Installation: Library Manager
+    - Example: IRrecv irrecv(RECV_PIN);
+
+37. RF24
+    - Purpose: nRF24L01 wireless communication
+    - Installation: Library Manager
+    - Example: RF24 radio(7, 8);
+
+38. SoftwareSerial
+    - Purpose: Additional serial ports
+    - Installation: Built-in
+    - Example: SoftwareSerial mySerial(2, 3);
+
+ADVANCED LIBRARIES
+==================
+
+39. FreeRTOS (ESP32)
+    - Purpose: Real-time operating system
+    - Installation: Built-in for ESP32
+    - Example: xTaskCreate(task1, "Task1", 1000, NULL, 1, NULL);
+
+40. AsyncWebServer
+    - Purpose: Asynchronous web server
+    - Installation: Manual (GitHub)
+    - Example: AsyncWebServer server(80);
+
+41. ESPAsyncWebServer
+    - Purpose: ESP32/ESP8266 async web server
+    - Installation: Manual (GitHub)
+    - Dependencies: AsyncTCP (ESP32) or ESPAsyncTCP (ESP8266)
+    - Example: AsyncWebServer server(80);
+
+42. BlynkSimpleEsp32
+    - Purpose: Blynk IoT platform integration
+    - Installation: Library Manager
+    - Example: Blynk.begin(auth, ssid, pass);
+
+INSTALLATION COMMANDS (PlatformIO)
+==================================
+
+For PlatformIO users, add these to your platformio.ini file:
+
+lib_deps = 
+    adafruit/DHT sensor library
+    adafruit/Adafruit SSD1306
+    adafruit/RTClib
+    bblanchon/ArduinoJson
+    knolleary/PubSubClient
+    fastled/FastLED
+    adafruit/Adafruit NeoPixel
+    paulstoffregen/OneWire
+    milesburton/DallasTemperature
+    electroniccats/MPU6050
+    mike-matera/FastPWM
+    z3t0/IRremote
+
+LIBRARY MANAGEMENT TIPS
+=======================
+
+1. Keep libraries updated for bug fixes and new features
+2. Check library documentation for proper usage
+3. Be aware of memory usage with large libraries
+4. Test libraries with simple examples first
+5. Use specific versions in production projects
+6. Remove unused libraries to save space
+
+COMMON LIBRARY CONFLICTS
+========================
+
+1. SoftwareSerial vs Hardware Serial timing issues
+2. Multiple libraries using same pins
+3. Timer conflicts between Servo and other libraries
+4. Memory conflicts with large libraries on Uno/Nano
+5. ESP32 vs ESP8266 library compatibility
+
+TROUBLESHOOTING LIBRARY ISSUES
+===============================
+
+1. Restart Arduino IDE after installing libraries
+2. Check library examples for proper usage
+3. Verify pin assignments don't conflict
+4. Check serial monitor for error messages
+5. Use latest stable versions
+6. Check GitHub issues for known problems
+
+For more information, visit:
+- Arduino Library Reference: https://www.arduino.cc/en/Reference/Libraries
+- PlatformIO Library Registry: https://platformio.org/lib
+- Arduino Library Manager: Tools > Manage Libraries in Arduino IDE
