@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LED Control Simulator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .led-board {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 20px;
+            margin: 30px 0;
+            padding: 30px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .led {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #333;
+            border: 3px solid #555;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 12px;
+            color: #999;
+        }
+
+        .led.on {
+            background: radial-gradient(circle, #ff6b6b, #ff4757);
+            border-color: #ff6b6b;
+            box-shadow: 0 0 20px #ff6b6b, 0 0 40px #ff6b6b, 0 0 60px #ff6b6b;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .led.green.on {
+            background: radial-gradient(circle, #2ed573, #2ed573);
+            border-color: #2ed573;
+            box-shadow: 0 0 20px #2ed573, 0 0 40px #2ed573, 0 0 60px #2ed573;
+        }
+
+        .led.blue.on {
+            background: radial-gradient(circle, #3742fa, #2f3542);
+            border-color: #3742fa;
+            box-shadow: 0 0 20px #3742fa, 0 0 40px #3742fa, 0 0 60px #3742fa;
+        }
+
+        .led.yellow.on {
+            background: radial-gradient(circle, #ffa502, #ff6348);
+            border-color: #ffa502;
+            box-shadow: 0 0 20px #ffa502, 0 0 40px #ffa502, 0 0 60px #ffa502;
+        }
+
+        .led:hover {
+            transform: scale(1.1);
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .control-group {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .control-group h3 {
+            margin-bottom: 15px;
+            color: #fff;
+            font-size: 1.2rem;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 5px;
+            min-width: 120px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button.active {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff4757 100%);
+        }
+
+        .slider-container {
+            margin: 15px 0;
+        }
+
+        .slider-container label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.3);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .pattern-editor {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .pattern-row {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+            align-items: center;
+        }
+
+        .pattern-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .status-bar {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+        }
+
+        @media (max-width: 768px) {
+            .led-board {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 15px;
+            }
+            
+            .led {
+                width: 50px;
+                height: 50px;
+                font-size: 10px;
+            }
+            
+            .controls {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔆 LED Control Simulator</h1>
+        
+        <div class="led-board" id="ledBoard">
+            <!-- LEDs will be generated by JavaScript -->
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <h3>Basic Controls</h3>
+                <button onclick="allOn()">All On</button>
+                <button onclick="allOff()">All Off</button>
+                <button onclick="toggleMode('blink')" id="blinkBtn">Blink</button>
+                <button onclick="clearAll()">Clear</button>
+            </div>
+
+            <div class="control-group">
+                <h3>Patterns</h3>
+                <button onclick="toggleMode('chase')" id="chaseBtn">Chase</button>
+                <button onclick="toggleMode('knightRider')" id="knightRiderBtn">Knight Rider</button>
+                <button onclick="toggleMode('wave')" id="waveBtn">Wave</button>
+                <button onclick="toggleMode('random')" id="randomBtn">Random</button>
+            </div>
+
+            <div class="control-group">
+                <h3>Speed Control</h3>
+                <div class="slider-container">
+                    <label for="speedSlider">Animation Speed: <span id="speedValue">500</span>ms</label>
+                    <input type="range" id="speedSlider" min="50" max="2000" value="500" oninput="updateSpeed(this.value)">
+                </div>
+            </div>
+
+            <div class="control-group">
+                <h3>LED Colors</h3>
+                <button onclick="setColorMode('red')" id="redBtn" class="active">Red</button>
+                <button onclick="setColorMode('green')" id="greenBtn">Green</button>
+                <button onclick="setColorMode('blue')" id="blueBtn">Blue</button>
+                <button onclick="setColorMode('yellow')" id="yellowBtn">Yellow</button>
+            </div>
+        </div>
+
+        <div class="pattern-editor">
+            <h3>Custom Pattern Editor</h3>
+            <div id="patternEditor">
+                <!-- Pattern editor will be generated by JavaScript -->
+            </div>
+            <button onclick="playCustomPattern()">Play Custom Pattern</button>
+            <button onclick="savePattern()">Save Pattern</button>
+            <button onclick="loadPattern()">Load Pattern</button>
+        </div>
+
+        <div class="status-bar">
+            <div id="statusText">LED Simulator Ready - Click LEDs individually or use controls</div>
+        </div>
+    </div>
+
+    <script>
+        class LEDSimulator {
+            constructor() {
+                this.numLEDs = 8;
+                this.leds = [];
+                this.currentMode = null;
+                this.animationSpeed = 500;
+                this.colorMode = 'red';
+                this.animationInterval = null;
+                this.animationIndex = 0;
+                this.customPattern = [];
+                
+                this.initializeLEDs();
+                this.initializePatternEditor();
+                this.updateStatus('LED Simulator initialized with ' + this.numLEDs + ' LEDs');
+            }
+
+            initializeLEDs() {
+                const ledBoard = document.getElementById('ledBoard');
+                ledBoard.innerHTML = '';
+                
+                for (let i = 0; i < this.numLEDs; i++) {
+                    const led = document.createElement('div');
+                    led.className = 'led ' + this.colorMode;
+                    led.id = 'led-' + i;
+                    led.textContent = i + 1;
+                    led.onclick = () => this.toggleLED(i);
+                    ledBoard.appendChild(led);
+                    this.leds.push(false);
+                }
+            }
+
+            initializePatternEditor() {
+                const patternEditor = document.getElementById('patternEditor');
+                patternEditor.innerHTML = '';
+                
+                for (let row = 0; row < 5; row++) {
+                    const rowDiv = document.createElement('div');
+                    rowDiv.className = 'pattern-row';
+                    
+                    const label = document.createElement('span');
+                    label.textContent = 'Step ' + (row + 1) + ':';
+                    label.style.minWidth = '60px';
+                    rowDiv.appendChild(label);
+                    
+                    for (let col = 0; col < this.numLEDs; col++) {
+                        const checkbox = document.createElement('input');
+                        checkbox.type = 'checkbox';
+                        checkbox.className = 'pattern-checkbox';
+                        checkbox.id = 'pattern-' + row + '-' + col;
+                        rowDiv.appendChild(checkbox);
+                    }
+                    
+                    patternEditor.appendChild(rowDiv);
+                }
+            }
+
+            toggleLED(index) {
+                this.leds[index] = !this.leds[index];
+                this.updateLEDDisplay();
+                this.updateStatus('LED ' + (index + 1) + ' ' + (this.leds[index] ? 'ON' : 'OFF'));
+            }
+
+            setLED(index, state) {
+                if (index >= 0 && index < this.numLEDs) {
+                    this.leds[index] = state;
+                }
+            }
+
+            updateLEDDisplay() {
+                for (let i = 0; i < this.numLEDs; i++) {
+                    const ledElement = document.getElementById('led-' + i);
+                    ledElement.className = 'led ' + this.colorMode + (this.leds[i] ? ' on' : '');
+                }
+            }
+
+            allOn() {
+                this.stopAnimation();
+                for (let i = 0; i < this.numLEDs; i++) {
+                    this.leds[i] = true;
+                }
+                this.updateLEDDisplay();
+                this.updateStatus('All LEDs ON');
+            }
+
+            allOff() {
+                this.stopAnimation();
+                for (let i = 0; i < this.numLEDs; i++) {
+                    this.leds[i] = false;
+                }
+                this.updateLEDDisplay();
+                this.updateStatus('All LEDs OFF');
+            }
+
+            clearAll() {
+                this.allOff();
+            }
+
+            toggleMode(mode) {
+                if (this.currentMode === mode) {
+                    this.stopAnimation();
+                } else {
+                    this.startAnimation(mode);
+                }
+            }
+
+            startAnimation(mode) {
+                this.stopAnimation();
+                this.currentMode = mode;
+                this.animationIndex = 0;
+                
+                // Update button states
+                document.querySelectorAll('.control-group button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                document.getElementById(mode + 'Btn').classList.add('active');
+                
+                this.animationInterval = setInterval(() => {
+                    this.runAnimation(mode);
+                }, this.animationSpeed);
+                
+                this.updateStatus('Started ' + mode + ' animation');
+            }
+
+            stopAnimation() {
+                if (this.animationInterval) {
+                    clearInterval(this.animationInterval);
+                    this.animationInterval = null;
+                }
+                this.currentMode = null;
+                
+                // Reset button states
+                document.querySelectorAll('.control-group button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                document.getElementById('redBtn').classList.add('active'); // Keep color button active
+            }
+
+            runAnimation(mode) {
+                switch (mode) {
+                    case 'blink':
+                        this.blinkAnimation();
+                        break;
+                    case 'chase':
+                        this.chaseAnimation();
+                        break;
+                    case 'knightRider':
+                        this.knightRiderAnimation();
+                        break;
+                    case 'wave':
+                        this.waveAnimation();
+                        break;
+                    case 'random':
+                        this.randomAnimation();
+                        break;
+                }
+                this.updateLEDDisplay();
+            }
+
+            blinkAnimation() {
+                const allOn = this.leds.every(led => led);
+                for (let i = 0; i < this.numLEDs; i++) {
+                    this.leds[i] = !allOn;
+                }
+            }
+
+            chaseAnimation() {
+                for (let i = 0; i < this.numLEDs; i++) {
+                    this.leds[i] = (i === this.animationIndex);
+                }
+                this.animationIndex = (this.animationIndex + 1) % this.numLEDs;
+            }
+
+            knightRiderAnimation() {
+                const direction = Math.floor(this.animationIndex / this.numLEDs) % 2;
+                const position = direction === 0 ? 
+                    this.animationIndex % this.numLEDs : 
+                    this.numLEDs - 1 - (this.animationIndex % this.numLEDs);
+                
+                for (let i = 0; i < this.numLEDs; i++) {
+                    this.leds[i] = (i === position);
+                }
+                this.animationIndex++;
+            }
+
+            waveAnimation() {
+                for (let i = 0; i < this.numLEDs; i++) {
+                    this.leds[i] = Math.sin((this.animationIndex + i) * 0.5) > 0;
+                }
+                this.animationIndex++;
+            }
+
+            randomAnimation() {
+                for (let i = 0; i < this.numLEDs; i++) {
+                    this.leds[i] = Math.random() > 0.5;
+                }
+            }
+
+            updateSpeed(speed) {
+                this.animationSpeed = parseInt(speed);
+                document.getElementById('speedValue').textContent = speed;
+                
+                if (this.animationInterval) {
+                    const currentMode = this.currentMode;
+                    this.stopAnimation();
+                    this.startAnimation(currentMode);
+                }
+                
+                this.updateStatus('Speed updated to ' + speed + 'ms');
+            }
+
+            setColorMode(color) {
+                this.colorMode = color;
+                
+                // Update button states
+                document.querySelectorAll('.control-group button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                document.getElementById(color + 'Btn').classList.add('active');
+                
+                // Update LED colors
+                this.initializeLEDs();
+                this.updateLEDDisplay();
+                
+                this.updateStatus('Color mode changed to ' + color);
+            }
+
+            playCustomPattern() {
+                const pattern = this.getCustomPattern();
+                if (pattern.length === 0) {
+                    this.updateStatus('No custom pattern defined');
+                    return;
+                }
+                
+                this.stopAnimation();
+                let stepIndex = 0;
+                
+                const playStep = () => {
+                    if (stepIndex >= pattern.length) {
+                        stepIndex = 0;
+                    }
+                    
+                    for (let i = 0; i < this.numLEDs; i++) {
+                        this.leds[i] = pattern[stepIndex][i] || false;
+                    }
+                    this.updateLEDDisplay();
+                    stepIndex++;
+                };
+                
+                this.animationInterval = setInterval(playStep, this.animationSpeed);
+                this.updateStatus('Playing custom pattern');
+            }
+
+            getCustomPattern() {
+                const pattern = [];
+                for (let row = 0; row < 5; row++) {
+                    const step = [];
+                    for (let col = 0; col < this.numLEDs; col++) {
+                        const checkbox = document.getElementById('pattern-' + row + '-' + col);
+                        step.push(checkbox.checked);
+                    }
+                    if (step.some(state => state)) {
+                        pattern.push(step);
+                    }
+                }
+                return pattern;
+            }
+
+            savePattern() {
+                const pattern = this.getCustomPattern();
+                localStorage.setItem('ledPattern', JSON.stringify(pattern));
+                this.updateStatus('Pattern saved to browser storage');
+            }
+
+            loadPattern() {
+                const savedPattern = localStorage.getItem('ledPattern');
+                if (savedPattern) {
+                    const pattern = JSON.parse(savedPattern);
+                    for (let row = 0; row < Math.min(5, pattern.length); row++) {
+                        for (let col = 0; col < this.numLEDs; col++) {
+                            const checkbox = document.getElementById('pattern-' + row + '-' + col);
+                            checkbox.checked = pattern[row][col] || false;
+                        }
+                    }
+                    this.updateStatus('Pattern loaded from browser storage');
+                } else {
+                    this.updateStatus('No saved pattern found');
+                }
+            }
+
+            updateStatus(message) {
+                document.getElementById('statusText').textContent = 
+                    new Date().toLocaleTimeString() + ' - ' + message;
+            }
+        }
+
+        // Initialize the LED simulator
+        let simulator;
+        window.onload = () => {
+            simulator = new LEDSimulator();
+        };
+
+        // Global functions for HTML onclick events
+        function allOn() { simulator.allOn(); }
+        function allOff() { simulator.allOff(); }
+        function clearAll() { simulator.clearAll(); }
+        function toggleMode(mode) { simulator.toggleMode(mode); }
+        function updateSpeed(speed) { simulator.updateSpeed(speed); }
+        function setColorMode(color) { simulator.setColorMode(color); }
+        function playCustomPattern() { simulator.playCustomPattern(); }
+        function savePattern() { simulator.savePattern(); }
+        function loadPattern() { simulator.loadPattern(); }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (event) => {
+            switch (event.key) {
+                case '1': simulator.allOn(); break;
+                case '0': simulator.allOff(); break;
+                case 'b': simulator.toggleMode('blink'); break;
+                case 'c': simulator.toggleMode('chase'); break;
+                case 'k': simulator.toggleMode('knightRider'); break;
+                case 'w': simulator.toggleMode('wave'); break;
+                case 'r': simulator.toggleMode('random'); break;
+                case ' ': simulator.stopAnimation(); break;
+            }
+        });
+    </script>
+</body>
+</html>
